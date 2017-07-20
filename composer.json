@@ -1,5 +1,5 @@
 {
-    "name": "nerdman/container",
+    "name": "nerdman/service-container",
     "description": "PHP 7.1 implementation of PSR-11: Container Interface",
     "type": "library",
     "license": "MIT",

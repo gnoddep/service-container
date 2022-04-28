@@ -13,7 +13,7 @@ class ServiceContainerTest extends TestCase
 {
     public function testReadOnlyClosedServiceContainer()
     {
-        $this->expectException(ReadOnlyException::class);
+        self::expectException(ReadOnlyException::class);
         $container = new ServiceContainer();
         $container->close();
         $container->add(new Service('service', ServiceWithoutDependencies::class));
@@ -21,7 +21,7 @@ class ServiceContainerTest extends TestCase
 
     public function testGetNotFound()
     {
-        $this->expectException(NotFoundException::class);
+        self::expectException(NotFoundException::class);
         $container = new ServiceContainer();
         $container->close();
         $container->get('service');
@@ -29,7 +29,7 @@ class ServiceContainerTest extends TestCase
 
     public function testIsResolvedServiceNotFound()
     {
-        $this->expectException(NotFoundException::class);
+        self::expectException(NotFoundException::class);
         $container = new ServiceContainer();
         $container->close();
         $container->isResolved('test');
@@ -39,21 +39,21 @@ class ServiceContainerTest extends TestCase
     {
         $container = (new ServiceContainer())->add(new Service('service', ServiceWithoutDependencies::class));
         $container->close();
-        $this->assertFalse($container->isResolved('service'));
+        self::assertFalse($container->isResolved('service'));
         $container->get('service');
-        $this->assertTrue($container->isResolved('service'));
+        self::assertTrue($container->isResolved('service'));
     }
 
     public function testGetServiceWithoutDependency()
     {
         $container = (new ServiceContainer())->add(new Service('service', ServiceWithoutDependencies::class));
         $container->close();
-        $this->assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service'));
+        self::assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service'));
     }
 
     public function testAddDuplicateService()
     {
-        $this->expectException(ExistsException::class);
+        self::expectException(ExistsException::class);
         (new ServiceContainer())
             ->add(new Service('service', ServiceWithoutDependencies::class))
             ->add(new Service('service', ServiceWithoutDependencies::class));
@@ -65,11 +65,11 @@ class ServiceContainerTest extends TestCase
             ->add(new Service('dependency', ServiceWithoutDependencies::class))
             ->add(new Service('service', ServiceWithOneDependency::class, 'dependency'));
         $container->close();
-        $this->assertFalse($container->isResolved('service'));
-        $this->assertFalse($container->isResolved('dependency'));
-        $this->assertInstanceOf(ServiceWithOneDependency::class, $container->get('service'));
-        $this->assertTrue($container->isResolved('dependency'));
-        $this->assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
+        self::assertFalse($container->isResolved('service'));
+        self::assertFalse($container->isResolved('dependency'));
+        self::assertInstanceOf(ServiceWithOneDependency::class, $container->get('service'));
+        self::assertTrue($container->isResolved('dependency'));
+        self::assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
     }
 
     public function testGetServiceWithTwoDependencies()
@@ -79,14 +79,14 @@ class ServiceContainerTest extends TestCase
             ->add(new Service('another.dependency', AnotherServiceWithoutDependencies::class))
             ->add(new Service('service', ServiceWithTwoDependencies::class, 'dependency', 'another.dependency'));
         $container->close();
-        $this->assertFalse($container->isResolved('service'));
-        $this->assertFalse($container->isResolved('dependency'));
-        $this->assertFalse($container->isResolved('another.dependency'));
-        $this->assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
-        $this->assertTrue($container->isResolved('dependency'));
-        $this->assertTrue($container->isResolved('another.dependency'));
-        $this->assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
-        $this->assertInstanceOf(
+        self::assertFalse($container->isResolved('service'));
+        self::assertFalse($container->isResolved('dependency'));
+        self::assertFalse($container->isResolved('another.dependency'));
+        self::assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
+        self::assertTrue($container->isResolved('dependency'));
+        self::assertTrue($container->isResolved('another.dependency'));
+        self::assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
+        self::assertInstanceOf(
             AnotherServiceWithoutDependencies::class,
             $container->get('service')->getAnotherDependency()
         );
@@ -101,21 +101,21 @@ class ServiceContainerTest extends TestCase
             ->add(new Service('service', ServiceWithTwoDependencies::class, 'dependency', 'one.dependency'));
         $container->close();
 
-        $this->assertFalse($container->isResolved('service'));
-        $this->assertFalse($container->isResolved('dependency'));
-        $this->assertFalse($container->isResolved('another.dependency'));
-        $this->assertFalse($container->isResolved('one.dependency'));
+        self::assertFalse($container->isResolved('service'));
+        self::assertFalse($container->isResolved('dependency'));
+        self::assertFalse($container->isResolved('another.dependency'));
+        self::assertFalse($container->isResolved('one.dependency'));
 
-        $this->assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
+        self::assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
 
-        $this->assertTrue($container->isResolved('dependency'));
-        $this->assertTrue($container->isResolved('another.dependency'));
-        $this->assertTrue($container->isResolved('one.dependency'));
+        self::assertTrue($container->isResolved('dependency'));
+        self::assertTrue($container->isResolved('another.dependency'));
+        self::assertTrue($container->isResolved('one.dependency'));
 
-        $this->assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
-        $this->assertInstanceOf(ServiceWithOneDependency::class, $container->get('service')->getAnotherDependency());
+        self::assertInstanceOf(ServiceWithoutDependencies::class, $container->get('service')->getDependency());
+        self::assertInstanceOf(ServiceWithOneDependency::class, $container->get('service')->getAnotherDependency());
 
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             AnotherServiceWithoutDependencies::class,
             $container->get('one.dependency')->getDependency()
         );
@@ -130,8 +130,8 @@ class ServiceContainerTest extends TestCase
             ->add(new Service('service', ServiceWithTwoDependencies::class, 'dependency', 'one.dependency'));
         $container->close();
 
-        $this->expectException(CircularDependencyException::class);
-        $this->assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
+        self::expectException(CircularDependencyException::class);
+        self::assertInstanceOf(ServiceWithTwoDependencies::class, $container->get('service'));
     }
 }
 
@@ -145,14 +145,14 @@ class AnotherServiceWithoutDependencies
 
 class ServiceWithOneDependency
 {
-    private $dependency;
+    private mixed $dependency;
 
-    public function __construct($dependency)
+    public function __construct(mixed $dependency)
     {
         $this->dependency = $dependency;
     }
 
-    public function getDependency()
+    public function getDependency(): mixed
     {
         return $this->dependency;
     }
@@ -160,15 +160,15 @@ class ServiceWithOneDependency
 
 class ServiceWithTwoDependencies extends ServiceWithOneDependency
 {
-    private $anotherDependency;
+    private mixed $anotherDependency;
 
-    public function __construct($dependency, $anotherDependency)
+    public function __construct(mixed $dependency, mixed $anotherDependency)
     {
         parent::__construct($dependency);
         $this->anotherDependency = $anotherDependency;
     }
 
-    public function getAnotherDependency()
+    public function getAnotherDependency(): mixed
     {
         return $this->anotherDependency;
     }

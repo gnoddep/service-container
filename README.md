@@ -1,6 +1,6 @@
 # Service Container
 
-A very light-weight service container implementation for PHP 7.1, can be used for dependency injection
+A very light-weight service container implementation for PHP 8.0, can be used for dependency injection
 
 ## Installation
 

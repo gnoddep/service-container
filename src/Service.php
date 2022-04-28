@@ -3,19 +3,15 @@ namespace Nerdman\Container;
 
 class Service
 {
-    /** @var string */
-    private $key;
-    /** @var string */
-    private $class;
-    /** @var mixed */
-    private $instance;
-    /** @var mixed[] */
-    private $dependencies = [];
+    private mixed $instance = null;
+    /** @var string[] */
+    private array $dependencies;
 
-    public function __construct(string $key, string $class, string ...$dependencies)
+    /**
+     * @param class-string $class
+     */
+    public function __construct(private string $key, private string $class, string ...$dependencies)
     {
-        $this->key = $key;
-        $this->class = $class;
         $this->dependencies = $dependencies;
     }
 
@@ -24,31 +20,27 @@ class Service
         return $this->key;
     }
 
+    /**
+     * @return class-string
+     */
     public function getClass(): string
     {
         return $this->class;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getInstance()
+    public function getInstance(): mixed
     {
         return $this->instance;
     }
 
-    /**
-     * @param mixed $instance
-     * @return Service
-     */
-    public function setInstance($instance): self
+    public function setInstance(mixed $instance): self
     {
         $this->instance = $instance;
         return $this;
     }
 
     /**
-     * @return mixed[]
+     * @return string[]
      */
     public function getDependencies(): array
     {

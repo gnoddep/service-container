@@ -1,6 +1,6 @@
 {
     "name": "nerdman/service-container",
-    "description": "PHP 7.1 implementation of PSR-11: Container Interface",
+    "description": "PHP 8.0 implementation of PSR-11: Container Interface",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -20,10 +20,10 @@
         }
     },
     "require": {
-        "php": "^7.1",
-        "psr/container": "^1.0"
+        "php": "^8.0",
+        "psr/container": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.2"
+        "phpunit/phpunit": "^9.5"
     }
 }

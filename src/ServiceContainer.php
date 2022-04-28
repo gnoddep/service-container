@@ -5,40 +5,36 @@ use Nerdman\Container\Exceptions\CircularDependencyException;
 use Nerdman\Container\Exceptions\ExistsException;
 use Nerdman\Container\Exceptions\NotFoundException;
 use Nerdman\Container\Exceptions\ReadOnlyException;
-use Nerdman\Container\Psr\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class ServiceContainer implements ContainerInterface
 {
-    /** @var bool  */
-    private $writable = true;
+    private bool $writable = true;
     /** @var Service[] */
-    private $services = [];
+    private array $services = [];
 
     /**
-     * @param string $key
-     * @param array $stack
-     * @return mixed
      * @throws CircularDependencyException
      * @throws NotFoundException
      */
-    public function get(string $key, array $stack = [])
+    public function get(string $id, array $stack = []): mixed
     {
-        if (!$this->has($key)) {
-            throw new NotFoundException($key);
+        if (!$this->has($id)) {
+            throw new NotFoundException($id);
         }
 
-        if (isset($stack[$key])) {
-            throw new CircularDependencyException($key, $stack);
+        if (isset($stack[$id])) {
+            throw new CircularDependencyException($id, $stack);
         } else {
-            $stack[$key] = true;
+            $stack[$id] = true;
         }
 
-        $service = $this->services[$key];
+        $service = $this->services[$id];
 
         if (!$service->getInstance()) {
             $class = $service->getClass();
 
-            $arguments = array_map(function (string $dependency) use ($stack) {
+            $arguments = \array_map(function (string $dependency) use ($stack) {
                 return $this->get($dependency, $stack);
             }, $service->getDependencies());
 
@@ -48,11 +44,14 @@ class ServiceContainer implements ContainerInterface
         return $service->getInstance();
     }
 
-    public function has(string $key): bool
+    public function has(string $id): bool
     {
-        return isset($this->services[$key]);
+        return isset($this->services[$id]);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function isResolved(string $key): bool
     {
         if (!$this->has($key)) {
@@ -67,6 +66,10 @@ class ServiceContainer implements ContainerInterface
         $this->writable = false;
     }
 
+    /**
+     * @throws ExistsException
+     * @throws ReadOnlyException
+     */
     public function add(Service $service): self
     {
         if (!$this->writable) {
